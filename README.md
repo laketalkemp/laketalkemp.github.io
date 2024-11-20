@@ -1,6 +1,6 @@
 # LaKeta L Kemp: Data Science Portfolio
 ## LaKeta L Kemp
-## Contact
+### Contact
 [email](laketa.kemp@gmail.com) | [LinkedIn](linkedin.com/in/laketalkemp/)	| [GitHub](https://laketalkemp.github.io/)
 
 ## Education

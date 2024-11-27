@@ -3,4 +3,4 @@
 ### Contact
 [email](laketa.kemp@gmail.com) | [LinkedIn](linkedin.com/in/laketalkemp/)	| [GitHub](https://laketalkemp.github.io/)
 
-View my CV: [2024 CV LaKeta Kemp](https://laketalkemp.github.io/CV)
+View my CV: [2024 CV LaKeta Kemp](CV.md)

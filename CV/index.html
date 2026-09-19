@@ -1,0 +1,856 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>LaKeta L. Kemp — Curriculum Vitae</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+  /* ─── Design tokens ─────────────────────────────────────────── */
+  :root {
+    --bg:            #EEF1F6;
+    --surface:       #FFFFFF;
+    --surface-alt:   #F4F7FA;
+    --text-primary:  #0C1B27;
+    --text-secondary:#3A5266;
+    --text-muted:    #6A8499;
+    --accent:        #135F66;
+    --accent-hover:  #0D474D;
+    --accent-warm:   #B07220;
+    --accent-light:  #D8EDEF;
+    --border:        #C8D6E2;
+    --rule:          #DDE4ED;
+
+    --ff-display: 'Cormorant Garamond', 'Georgia', serif;
+    --ff-body:    'IBM Plex Sans', system-ui, sans-serif;
+    --ff-mono:    'IBM Plex Mono', 'Menlo', monospace;
+
+    --max-w:  860px;
+    --gutter: clamp(1rem, 4vw, 2.5rem);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:            #09131C;
+      --surface:       #0D1E2C;
+      --surface-alt:   #112438;
+      --text-primary:  #E2EBF5;
+      --text-secondary:#8CAABF;
+      --text-muted:    #536E82;
+      --accent:        #27ADBA;
+      --accent-hover:  #3DC5D3;
+      --accent-warm:   #CF912E;
+      --accent-light:  #0C2D3A;
+      --border:        #1C3448;
+      --rule:          #172A3C;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:            #09131C;
+    --surface:       #0D1E2C;
+    --surface-alt:   #112438;
+    --text-primary:  #E2EBF5;
+    --text-secondary:#8CAABF;
+    --text-muted:    #536E82;
+    --accent:        #27ADBA;
+    --accent-hover:  #3DC5D3;
+    --accent-warm:   #CF912E;
+    --accent-light:  #0C2D3A;
+    --border:        #1C3448;
+    --rule:          #172A3C;
+  }
+
+  /* ─── Reset & base ──────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { font-size: 16px; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: var(--ff-body);
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    padding-inline: var(--gutter);
+    padding-block: clamp(1.5rem, 4vw, 3rem);
+    min-height: 100vh;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 2px;
+    transition: text-decoration-color 0.15s;
+  }
+  a:hover { text-decoration-color: currentColor; }
+
+  /* ─── Layout ─────────────────────────────────────────────────── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin-inline: auto;
+  }
+
+  /* ─── Nav ────────────────────────────────────────────────────── */
+  .nav-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-family: var(--ff-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-bottom: 2.5rem;
+    transition: color 0.15s;
+  }
+  .nav-back:hover { color: var(--accent); text-decoration: none; }
+  .nav-back svg { flex-shrink: 0; }
+
+  /* ─── View toggle ────────────────────────────────────────────── */
+  .view-toggle {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 0;
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+    width: fit-content;
+  }
+  .view-btn {
+    font-family: var(--ff-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.5rem 1.125rem;
+    background: var(--surface);
+    color: var(--text-muted);
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .view-btn + .view-btn { border-left: 1px solid var(--border); }
+  .view-btn.active {
+    background: var(--accent);
+    color: #fff;
+  }
+  .view-btn:hover:not(.active) {
+    background: var(--surface-alt);
+    color: var(--text-secondary);
+  }
+
+  /* ─── CV header ──────────────────────────────────────────────── */
+  .cv-header {
+    padding-block: 2rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+  }
+  .cv-name {
+    font-family: var(--ff-display);
+    font-weight: 500;
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.1;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+  }
+  .cv-contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.5rem;
+    font-family: var(--ff-mono);
+    font-size: 0.6875rem;
+    color: var(--text-secondary);
+  }
+  .cv-contact a { color: var(--text-secondary); }
+  .cv-contact a:hover { color: var(--accent); }
+
+  /* ─── Section label ──────────────────────────────────────────── */
+  .section-label {
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    margin-top: 2.5rem;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  /* ─── CV entry rows ──────────────────────────────────────────── */
+  .cv-section { margin-bottom: 0.5rem; }
+
+  .cv-entry {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    gap: 0 1.5rem;
+    padding-block: 0.625rem;
+    border-top: 1px solid var(--rule);
+  }
+  .cv-entry:first-of-type { border-top: none; }
+
+  @media (max-width: 480px) {
+    .cv-entry { grid-template-columns: 1fr; gap: 0.25rem; }
+  }
+
+  .cv-year {
+    font-family: var(--ff-mono);
+    font-size: 0.625rem;
+    color: var(--text-muted);
+    padding-top: 0.2rem;
+    line-height: 1.5;
+  }
+  .cv-body { }
+  .cv-body strong {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+  }
+  .cv-body em {
+    font-family: var(--ff-display);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--text-secondary);
+  }
+  .cv-body .cv-loc {
+    font-family: var(--ff-mono);
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    display: block;
+    margin-top: 0.15rem;
+  }
+  .cv-body p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-top: 0.4rem;
+    line-height: 1.6;
+  }
+  .cv-body ul {
+    margin-top: 0.4rem;
+    padding-left: 1.1rem;
+  }
+  .cv-body ul li {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 0.25rem;
+  }
+
+  /* ─── Publication / patent entries ──────────────────────────── */
+  .pub-list { list-style: decimal; padding-left: 1.25rem; }
+  .pub-list li {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    padding-block: 0.5rem;
+    border-top: 1px solid var(--rule);
+  }
+  .pub-list li:first-child { border-top: none; }
+  .pub-list li em { font-style: italic; color: var(--text-primary); }
+
+  /* ─── Cert / society entries (no year column) ────────────────── */
+  .cv-list { list-style: none; padding: 0; }
+  .cv-list li {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    padding-block: 0.5rem;
+    border-top: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: 0 1rem;
+  }
+  .cv-list li:first-child { border-top: none; }
+  .cv-list .list-tag {
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    color: var(--text-muted);
+    padding-top: 0.25rem;
+  }
+
+  /* ─── Simple bullet list (certs, workshops) ──────────────────── */
+  .bullet-list { list-style: none; padding: 0; }
+  .bullet-list li {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    padding-block: 0.5rem;
+    border-top: 1px solid var(--rule);
+    padding-left: 0.9rem;
+    position: relative;
+  }
+  .bullet-list li:first-child { border-top: none; }
+  .bullet-list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+  }
+  .bullet-list li strong {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  /* ─── Research interests prose ───────────────────────────────── */
+  .research-prose p {
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin-bottom: 1rem;
+  }
+  .research-prose p:last-child { margin-bottom: 0; }
+
+  /* ─── Awards block ───────────────────────────────────────────── */
+  .award-block {
+    padding-block: 1rem;
+    border-top: 1px solid var(--rule);
+  }
+  .award-block:first-of-type { border-top: none; }
+  .award-institution {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+  }
+  .award-degree {
+    font-family: var(--ff-display);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--text-secondary);
+  }
+  .award-honors {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+  }
+
+  /* ─── Contributions entry ────────────────────────────────────── */
+  .contrib-entry {
+    padding-block: 0.75rem;
+    border-top: 1px solid var(--rule);
+  }
+  .contrib-entry:first-of-type { border-top: none; }
+  .contrib-title {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+    margin-bottom: 0.2rem;
+  }
+  .contrib-meta {
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .contrib-desc {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+
+  /* ─── PDF panel ──────────────────────────────────────────────── */
+  #pdf-view {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  #pdf-view.active { display: flex; }
+
+  .pdf-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1.25rem;
+    border-bottom: 1px solid var(--rule);
+    background: var(--surface-alt);
+  }
+  .pdf-label {
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .pdf-download {
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--accent);
+    transition: background 0.15s, color 0.15s;
+  }
+  .pdf-download:hover {
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .pdf-embed-wrap {
+    position: relative;
+    width: 100%;
+    height: 84vh;
+    min-height: 500px;
+    background: var(--surface-alt);
+  }
+  .pdf-embed-wrap embed,
+  .pdf-embed-wrap iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+  .pdf-fallback {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    height: 100%;
+    padding: 2rem;
+    text-align: center;
+  }
+  .pdf-fallback p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+
+  /* ─── Footer ─────────────────────────────────────────────────── */
+  .cv-footer {
+    margin-top: 3.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .cv-footer-text {
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .cv-footer a {
+    color: var(--text-muted);
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .cv-footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- Back nav -->
+  <a href="https://laketalkemp.github.io" class="nav-back">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+    laketalkemp.github.io
+  </a>
+
+  <!-- View toggle -->
+  <div class="view-toggle" role="group" aria-label="CV view">
+    <button class="view-btn active" id="btn-formatted" aria-pressed="true">Formatted CV</button>
+    <button class="view-btn" id="btn-pdf" aria-pressed="false">PDF</button>
+  </div>
+
+  <!-- ─── Formatted CV ───────────────────────────────────────── -->
+  <div id="formatted-view">
+
+    <!-- Header -->
+    <header class="cv-header">
+      <h1 class="cv-name">LaKeta L. Kemp</h1>
+      <div class="cv-contact">
+        <span>858-751-4591</span>
+        <a href="mailto:laketa.kemp@gmail.com">laketa.kemp@gmail.com</a>
+        <a href="https://linkedin.com/in/laketalkemp/" target="_blank" rel="noopener noreferrer">linkedin.com/in/laketalkemp</a>
+        <a href="https://github.com/laketalkemp" target="_blank" rel="noopener noreferrer">github.com/laketalkemp</a>
+      </div>
+    </header>
+
+    <!-- Education -->
+    <section class="cv-section" aria-labelledby="lbl-edu">
+      <h2 class="section-label" id="lbl-edu">Education</h2>
+      <div class="cv-entry">
+        <span class="cv-year">2024&ndash;present</span>
+        <div class="cv-body">
+          <strong>University of California, San Diego</strong>
+          <em>, PhD Student, Data Science</em>
+          <span class="cv-loc">La Jolla, California</span>
+        </div>
+      </div>
+      <div class="cv-entry">
+        <span class="cv-year">2023&ndash;2024</span>
+        <div class="cv-body">
+          <strong>Howard University</strong>
+          <em>, Master of Science, Data Science</em>
+          <span class="cv-loc">Washington, DC</span>
+        </div>
+      </div>
+      <div class="cv-entry">
+        <span class="cv-year">2023</span>
+        <div class="cv-body">
+          <strong>California Institute of Technology</strong>
+          <em>, Graduate Certificate, Data Science</em>
+          <span class="cv-loc">Pasadena, California</span>
+        </div>
+      </div>
+      <div class="cv-entry">
+        <span class="cv-year">2022</span>
+        <div class="cv-body">
+          <strong>Massachusetts Institute of Technology</strong>
+          <em>, Graduate Certificate, Applied Data Science</em>
+          <span class="cv-loc">Cambridge, Massachusetts</span>
+        </div>
+      </div>
+      <div class="cv-entry">
+        <span class="cv-year">1996&ndash;2008</span>
+        <div class="cv-body">
+          <strong>Arizona State University</strong>
+          <em>, Bachelor of Science, Molecular Biosciences</em>
+          <span class="cv-loc">Tempe, Arizona</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Publications & Patents -->
+    <section class="cv-section" aria-labelledby="lbl-pub">
+      <h2 class="section-label" id="lbl-pub">Patents &amp; Selected Technical Publications</h2>
+      <ol class="pub-list">
+        <li>Bacterial identification. The present invention provides for separating bacterial species and serotypes using electrophoretic methods. T Taylor, M Hayes, LK Kemp, P Jones. <em>US Patent 9,185,356</em>, 2015.</li>
+        <li>DC-iGDEP device for separating bacterial serotypes. T Taylor, M Hayes, LK Kemp, P Jones. <em>US Patent 9,476,085</em>, 2016.</li>
+        <li>Paul V. Jones, Alexa F. DeMichele, LaKeta Kemp, and Mark A. Hayes. Differentiation of Escherichia coli Serotypes Using DC Gradient Insulator Dielectrophoresis. <em>Anal. Bioanal.</em> 2014, 406(1), 183&ndash;192.</li>
+        <li>Crowther CV, Hilton SH, Kemp L, Hayes MA. Isolation and identification of Listeria monocytogenes utilizing DC insulator-based dielectrophoresis. <em>Analytica chimica acta.</em> 2019 Aug 30;1068:41&ndash;51.</li>
+      </ol>
+    </section>
+
+    <!-- Research Experience -->
+    <section class="cv-section" aria-labelledby="lbl-res">
+      <h2 class="section-label" id="lbl-res">Research Experience</h2>
+      <div class="cv-entry">
+        <span class="cv-year">2024&ndash;present</span>
+        <div class="cv-body">
+          <strong>Graduate Student Researcher</strong>
+          <em>, Climate Analytics Lab, UCSD</em>
+          <span class="cv-loc">La Jolla, California</span>
+          <p>Develops and trains neural network-based emulators to serve as computationally efficient surrogates for complex Earth System Models (ESMs). This machine learning approach is designed to significantly accelerate climate projection simulations, reducing the time and resources required for climate analysis, and enhancing understanding of the impacts of climate change.</p>
+        </div>
+      </div>
+      <div class="cv-entry">
+        <span class="cv-year">2024</span>
+        <div class="cv-body">
+          <strong>Graduate Intern, Critical Infrastructure Analysis</strong>
+          <em>, Lawrence Livermore National Laboratory</em>
+          <span class="cv-loc">Cyber and Critical Infrastructure Summer Institute &middot; Global Security Directorate, E Program &middot; Livermore, California</span>
+          <p>Conducted advanced geospatial and statistical analysis on high-dimensional data, contributing to the development of new simulation algorithms and optimization models. Work aimed to assess the reliability of critical power systems and enhance national emergency preparedness. Findings were compiled into technical reports advising business partners on concrete strategies for hardening vital infrastructure.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Employment -->
+    <section class="cv-section" aria-labelledby="lbl-emp">
+      <h2 class="section-label" id="lbl-emp">Employment Experience</h2>
+      <div class="cv-entry">
+        <span class="cv-year">2024&ndash;present</span>
+        <div class="cv-body">
+          <strong>Adjunct Data Scientist</strong>
+          <em>, Howard University, Center for Applied Data Science and Analytics</em>
+          <span class="cv-loc">Washington, DC</span>
+        </div>
+      </div>
+      <div class="cv-entry">
+        <span class="cv-year">2024</span>
+        <div class="cv-body">
+          <strong>Graduate Intern, Critical Infrastructure Analysis</strong>
+          <em>, Lawrence Livermore National Laboratory</em>
+          <span class="cv-loc">Livermore, California</span>
+        </div>
+      </div>
+      <div class="cv-entry">
+        <span class="cv-year">2023&ndash;2024</span>
+        <div class="cv-body">
+          <strong>Project Manager</strong>
+          <em>, Osmo Labs AI</em>
+          <span class="cv-loc">Phoenix, Arizona</span>
+        </div>
+      </div>
+      <div class="cv-entry">
+        <span class="cv-year">2023&ndash;2024</span>
+        <div class="cv-body">
+          <strong>Advanced Degree Intern, Data Science</strong>
+          <em>, Salt River Project</em>
+          <span class="cv-loc">Phoenix, Arizona</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Teaching -->
+    <section class="cv-section" aria-labelledby="lbl-teach">
+      <h2 class="section-label" id="lbl-teach">Teaching Experience</h2>
+      <div class="cv-entry">
+        <span class="cv-year">2025&ndash;present</span>
+        <div class="cv-body">
+          <strong>Instructional Assistant</strong>
+          <em>, University of California, San Diego</em>
+          <span class="cv-loc">DSC 257R: Data Mining on the Web &mdash; Current Methods in Recommender Systems, Data Mining, and Predictive Analytics</span>
+        </div>
+      </div>
+      <div class="cv-entry">
+        <span class="cv-year">2024&ndash;present</span>
+        <div class="cv-body">
+          <strong>Adjunct Data Scientist</strong>
+          <em>, Howard University, Center for Applied Data Science and Analytics</em>
+          <span class="cv-loc">Washington, DC &middot; DATA-200: Introduction to Data Science, DATA-801: Internship, DATA-802: Graduate Capstone</span>
+        </div>
+      </div>
+      <div class="cv-entry">
+        <span class="cv-year">2024, 2025</span>
+        <div class="cv-body">
+          <strong>Primary Instructor</strong>
+          <em>, Howard University Data Science for Social Impact Summer Bootcamp</em>
+        </div>
+      </div>
+    </section>
+
+    <!-- Selected Projects -->
+    <section class="cv-section" aria-labelledby="lbl-proj">
+      <h2 class="section-label" id="lbl-proj">Selected Projects</h2>
+      <div class="cv-entry">
+        <span class="cv-year">2023</span>
+        <div class="cv-body">
+          <strong>TPE-XGBoost Model for Electric Load Forecasting</strong>
+          <p>Detection of seasonal data using a discrete Fourier transform model with a Pearson Correlation Coefficient and MAPE metric to optimize the predictive capacity of electric load forecasting and decision-making for electric power reserves during high consumer demand to the utility-scale electric grid.</p>
+        </div>
+      </div>
+      <div class="cv-entry">
+        <span class="cv-year">2023</span>
+        <div class="cv-body">
+          <strong>Short-Term Forecasting of Daily Precipitation Using a SARIMA-XGBoost Model</strong>
+          <p>Creation of a forecasting model combining historical patterns to predict the likelihood of future weather events in Australia. Severe weather forecasting is increasingly important as human impact on the climate intensifies. Confidently forecasting extreme events is essential for protecting life.</p>
+        </div>
+      </div>
+      <div class="cv-entry">
+        <span class="cv-year">2022</span>
+        <div class="cv-body">
+          <strong>Identification of Plasmodium spp. from Digital Blood Smear Slides Using Computer Vision</strong>
+          <p>Construction and testing of a computer vision model that accurately analyzes digital images of blood smears, both infected and uninfected, for key features that identify malaria infections at the species level.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Grants & Fellowships -->
+    <section class="cv-section" aria-labelledby="lbl-grants">
+      <h2 class="section-label" id="lbl-grants">Grants &amp; Fellowships</h2>
+      <div class="cv-entry">
+        <span class="cv-year">2024&ndash;2025</span>
+        <div class="cv-body">
+          <strong>The National GEM Consortium PhD Engineering and Science Fellowship</strong>
+        </div>
+      </div>
+      <div class="cv-entry">
+        <span class="cv-year">2024</span>
+        <div class="cv-body">
+          <strong>AIM-AHEAD All of Us Traineeship</strong>
+          <em>, Artificial Intelligence/Machine Learning Consortium to Advance Health Equity and Researcher Diversity</em>
+        </div>
+      </div>
+      <div class="cv-entry">
+        <span class="cv-year">2023&ndash;2024</span>
+        <div class="cv-body">
+          <strong>Mastercard Data Science Impact Fellowship</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- Honors & Awards -->
+    <section class="cv-section" aria-labelledby="lbl-awards">
+      <h2 class="section-label" id="lbl-awards">Major Awards &amp; Honors</h2>
+      <div class="award-block">
+        <div class="award-institution">University of California, San Diego (UCSD)</div>
+        <div class="award-degree">Doctor of Philosophy, Data Science &middot; September 2024&ndash;Present &middot; La Jolla, CA</div>
+        <div class="award-honors">GEM Triton Scholar &middot; Competitive Edge PhD Student Mentor</div>
+      </div>
+      <div class="award-block">
+        <div class="award-institution">Howard University</div>
+        <div class="award-degree">Master of Science, Data Science &middot; May 2024 &middot; Washington, DC</div>
+        <div class="award-honors">Mastercard Data Science Fellow &middot; AIM-AHEAD Fellow &middot; Upsilon Pi Epsilon Honor Society</div>
+      </div>
+    </section>
+
+    <!-- Certifications -->
+    <section class="cv-section" aria-labelledby="lbl-certs">
+      <h2 class="section-label" id="lbl-certs">Current Certifications</h2>
+      <ul class="bullet-list">
+        <li><strong>Microsoft Certified: Azure AI Fundamentals</strong>, Microsoft &middot; Issued Sep 2023 &middot; Credential ID E9FD47796C7E1EF5</li>
+        <li><strong>Human Subjects Research, Biomedical Foundations</strong>, CITI Program &middot; Issued Jul 2023 &middot; Credential ID 56866011</li>
+        <li><strong>Applied Data Science Program</strong>, MIT Professional Education &middot; Issued Jan 2023 &middot; Credential ID 66764790</li>
+        <li><strong>Lean Six Sigma Yellow Belt (LSSYB)</strong>, Ira A. Fulton Schools of Engineering, Arizona State University &middot; Issued Jun 2021 &middot; Credential ID 60d50a2b0348c77e12ee65cb</li>
+      </ul>
+    </section>
+
+    <!-- Professional Societies -->
+    <section class="cv-section" aria-labelledby="lbl-soc">
+      <h2 class="section-label" id="lbl-soc">Professional Societies</h2>
+      <ul class="cv-list">
+        <li>
+          <span class="list-tag">UPE</span>
+          <span>Upsilon Pi Epsilon Honor Society, Howard University Chapter, 2024</span>
+        </li>
+        <li>
+          <span class="list-tag">NEB</span>
+          <span>Northeast Big Data Hub, 2024</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Workshops & Symposia -->
+    <section class="cv-section" aria-labelledby="lbl-workshops">
+      <h2 class="section-label" id="lbl-workshops">Workshops &amp; Symposia</h2>
+      <div class="cv-entry">
+        <span class="cv-year">Summer 2025</span>
+        <div class="cv-body">
+          <strong>Communicating Science for Policy</strong>
+          <em>, National Science Policy Network, George Mason University</em>
+          <span class="cv-loc">Fairfax, Virginia &middot; July 21&ndash;30</span>
+        </div>
+      </div>
+      <div class="cv-entry">
+        <span class="cv-year">Summer 2025</span>
+        <div class="cv-body">
+          <strong>Frontiers in Ocean Sciences Symposium</strong>
+          <em>, National Science Foundation</em>
+          <span class="cv-loc">June 30</span>
+        </div>
+      </div>
+      <div class="cv-entry">
+        <span class="cv-year">Spring 2024</span>
+        <div class="cv-body">
+          <strong>Displacement and Reparation: Climate, Labor and Migration Justice Symposium</strong>
+          <em>, University of California, San Diego</em>
+          <span class="cv-loc">La Jolla, California &middot; February 7</span>
+        </div>
+      </div>
+      <div class="cv-entry">
+        <span class="cv-year">Spring 2024</span>
+        <div class="cv-body">
+          <strong>Women in Data Science Annual Conference</strong>
+          <em>, Stanford University</em>
+          <span class="cv-loc">Palo Alto, California &middot; March 5&ndash;6</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contributions / Synergistic Activities -->
+    <section class="cv-section" aria-labelledby="lbl-contrib">
+      <h2 class="section-label" id="lbl-contrib">Contributions &amp; Synergistic Activities</h2>
+      <div class="contrib-entry">
+        <div class="contrib-meta">Strategic Convene and Influence Award &middot; 2026&ndash;2027</div>
+        <div class="contrib-title">Climate Data Science for Human Rights and Humanitarian Resilience</div>
+        <div class="contrib-desc">Development of the Displacement Hotspot Vulnerability Mapping Tool, a machine learning framework grounded in Recognition Justice and Distributive Justice theory that identifies the populations bearing the greatest burden of climate-driven displacement risk. The tool integrates composite vulnerability indices derived from the INFORM Risk Index and UNHCR vulnerability screening criteria, spatial cluster typology analysis, and temporal risk modeling structured toward compatibility with humanitarian field operations. Work conducted under the Extreme Weather and Environmental Displacement and Health Initiative.</div>
+      </div>
+    </section>
+
+    <!-- Research Interests -->
+    <section class="cv-section" aria-labelledby="lbl-ri">
+      <h2 class="section-label" id="lbl-ri">Research Interests</h2>
+      <div class="research-prose">
+        <p>My primary research interest lies at the intersection of machine learning and climate science, with a focus on developing computationally efficient solutions to pressing environmental challenges. I am currently working on creating neural network-based emulators for complex Earth System Models (ESMs), a technique designed to drastically accelerate climate projection simulations. By building these fast and accurate surrogate models, my goal is to make high-resolution climate analysis more accessible. This forms the foundation for proactive tools, such as climate displacement early warning systems, that can better predict and mitigate the human impact of extreme weather events.</p>
+        <p>To ground these predictive models, a key part of my research involves the robust calibration of remote sensing data. I am particularly focused on developing methodologies to fuse and calibrate European Space Agency (ESA) satellite data with in-situ ground sensor readings, especially in regions disparately affected by climate extremes. Ensuring this data alignment is crucial for reducing uncertainty and enhancing the reliability of localized climate impact models, which is the necessary first step toward developing dependable real-world applications.</p>
+        <p>Crucially, my approach to developing these models is rooted in a commitment to ethical AI and social equity. I believe the communities most disproportionately affected by climate extremes must not be just subjects of the data but active participants in creating these solutions. This involves designing models that are transparent, fair, and directly address the needs and contexts of vulnerable populations, ensuring that outputs do not perpetuate existing biases but instead empower inclusive and just climate adaptation strategies.</p>
+        <p>The ultimate application of this ethically-grounded research is to translate these predictive capabilities into actionable humanitarian intelligence. I am particularly motivated to further the mission of organizations like M&eacute;decins Sans Fronti&egrave;res (Doctors Without Borders) by developing weather anomaly systems that can provide critical foresight for their field operations. By forecasting impending floods, droughts, or heatwaves with greater lead time and geographic precision, these tools can enable the prepositioning of medical supplies, the proactive deployment of mobile clinics, and the anticipation of public health crises, directly supporting life-saving interventions in the world's most vulnerable communities.</p>
+      </div>
+    </section>
+
+  </div><!-- /formatted-view -->
+
+  <!-- ─── PDF view ────────────────────────────────────────────── -->
+  <div id="pdf-view" role="region" aria-label="PDF version of CV">
+    <div class="pdf-toolbar">
+      <span class="pdf-label">Kemp CV 2025 &middot; PDF</span>
+      <a href="./Kemp_CV_2025.pdf" download="Kemp_CV_2025.pdf" class="pdf-download">
+        Download PDF
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle;margin-left:0.3em"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </a>
+    </div>
+    <div class="pdf-embed-wrap">
+      <embed
+        id="pdf-embed"
+        src="./Kemp_CV_2025.pdf#toolbar=1&navpanes=0"
+        type="application/pdf"
+        title="LaKeta L. Kemp Curriculum Vitae 2025"
+      >
+      <div class="pdf-fallback" id="pdf-fallback">
+        <p>Your browser does not support inline PDF preview.</p>
+        <a href="./Kemp_CV_2025.pdf" download="Kemp_CV_2025.pdf" class="pdf-download">Download PDF</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="cv-footer">
+    <span class="cv-footer-text">LaKeta L. Kemp &middot; Curriculum Vitae &middot; 2025</span>
+    <a href="https://laketalkemp.github.io">laketalkemp.github.io</a>
+  </footer>
+
+</div><!-- /page-wrap -->
+
+<script>
+// ─── View toggle ───────────────────────────────────────────────
+const btnFormatted = document.getElementById('btn-formatted');
+const btnPdf       = document.getElementById('btn-pdf');
+const formattedView = document.getElementById('formatted-view');
+const pdfView       = document.getElementById('pdf-view');
+
+btnFormatted.addEventListener('click', () => {
+  btnFormatted.classList.add('active');
+  btnFormatted.setAttribute('aria-pressed', 'true');
+  btnPdf.classList.remove('active');
+  btnPdf.setAttribute('aria-pressed', 'false');
+  formattedView.style.display = '';
+  pdfView.classList.remove('active');
+});
+
+btnPdf.addEventListener('click', () => {
+  btnPdf.classList.add('active');
+  btnPdf.setAttribute('aria-pressed', 'true');
+  btnFormatted.classList.remove('active');
+  btnFormatted.setAttribute('aria-pressed', 'false');
+  formattedView.style.display = 'none';
+  pdfView.classList.add('active');
+});
+
+// ─── PDF fallback detection ────────────────────────────────────
+const embed = document.getElementById('pdf-embed');
+const fallback = document.getElementById('pdf-fallback');
+if (embed) {
+  embed.addEventListener('error', () => {
+    embed.style.display = 'none';
+    fallback.style.display = 'flex';
+  });
+}
+</script>
+</body>
+</html>

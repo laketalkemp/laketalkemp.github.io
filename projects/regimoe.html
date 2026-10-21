@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="RegiMoE: regime-gated mixture-of-experts downscaling of coarse climate data against ground truth, built to make heat risk visible where displaced people live. Project milestones and progress.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>RegiMoE: Regime-Gated Downscaling</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+  /* ─── Design tokens ─────────────────────────────────────────── */
+  :root {
+    --bg:            #EEF1F6;
+    --surface:       #FFFFFF;
+    --surface-alt:   #F4F7FA;
+    --text-primary:  #0C1B27;
+    --text-secondary:#3A5266;
+    --text-muted:    #6A8499;
+    --accent:        #135F66;
+    --accent-hover:  #0D474D;
+    --accent-warm:   #B07220;
+    --accent-light:  #D8EDEF;
+    --border:        #C8D6E2;
+    --rule:          #DDE4ED;
+
+    --ff-display: 'Cormorant Garamond', 'Georgia', serif;
+    --ff-body:    'IBM Plex Sans', system-ui, sans-serif;
+    --ff-mono:    'IBM Plex Mono', 'Menlo', monospace;
+
+    --max-w:  1080px;
+    --gutter: clamp(1rem, 4vw, 2.5rem);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:            #09131C;
+      --surface:       #0D1E2C;
+      --surface-alt:   #112438;
+      --text-primary:  #E2EBF5;
+      --text-secondary:#8CAABF;
+      --text-muted:    #536E82;
+      --accent:        #27ADBA;
+      --accent-hover:  #3DC5D3;
+      --accent-warm:   #CF912E;
+      --accent-light:  #0C2D3A;
+      --border:        #1C3448;
+      --rule:          #172A3C;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:            #09131C;
+    --surface:       #0D1E2C;
+    --surface-alt:   #112438;
+    --text-primary:  #E2EBF5;
+    --text-secondary:#8CAABF;
+    --text-muted:    #536E82;
+    --accent:        #27ADBA;
+    --accent-hover:  #3DC5D3;
+    --accent-warm:   #CF912E;
+    --accent-light:  #0C2D3A;
+    --border:        #1C3448;
+    --rule:          #172A3C;
+  }
+
+  /* ─── Reset ─────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    font-family: var(--ff-body);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+    background: var(--bg);
+    padding-inline: var(--gutter);
+    padding-block: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img { max-width: 100%; display: block; }
+  a { color: var(--accent); text-decoration: none; transition: color 0.15s; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      transition-duration: .01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* ─── Navigation ────────────────────────────────────────────── */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    margin-inline: calc(-1 * var(--gutter));
+    padding-inline: var(--gutter);
+  }
+  .nav-inner {
+    max-width: var(--max-w);
+    margin-inline: auto;
+    height: 3.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .nav-name {
+    font-family: var(--ff-display);
+    font-weight: 400;
+    font-size: 1.0625rem;
+    letter-spacing: 0.01em;
+    color: var(--text-primary);
+    white-space: nowrap;
+    flex-shrink: 0;
+    text-decoration: none;
+  }
+  .nav-back {
+    font-family: var(--ff-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    transition: color 0.15s;
+    text-decoration: none;
+  }
+  .nav-back:hover { color: var(--accent); text-decoration: none; }
+
+  /* ─── Page wrapper ──────────────────────────────────────────── */
+  .page { max-width: var(--max-w); margin-inline: auto; }
+
+  /* ─── Project header ────────────────────────────────────────── */
+  .project-header {
+    padding-block: clamp(3rem, 7vw, 5.5rem) clamp(2.5rem, 4vw, 4rem);
+    border-bottom: 1px solid var(--rule);
+  }
+  .project-eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    margin-bottom: 1.75rem;
+  }
+  .badge {
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.25em 0.7em;
+    border: 1px solid;
+  }
+  .badge-award {
+    color: var(--accent-warm);
+    border-color: color-mix(in srgb, var(--accent-warm) 35%, transparent);
+    background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+  }
+  .badge-status {
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+    background: var(--accent-light);
+  }
+  .project-title {
+    font-family: var(--ff-display);
+    font-weight: 300;
+    font-size: clamp(2.25rem, 6vw, 4.25rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    text-wrap: balance;
+    margin-bottom: 1.25rem;
+  }
+  .project-title em { font-style: italic; color: var(--text-secondary); }
+  .project-subtitle {
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    max-width: 62ch;
+    line-height: 1.65;
+    margin-bottom: 2rem;
+  }
+  .project-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+  }
+  .meta-item { display: flex; flex-direction: column; gap: 0.15rem; }
+  .meta-label {
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .meta-value { font-size: 0.8125rem; color: var(--text-secondary); }
+
+  /* ─── Section shared ────────────────────────────────────────── */
+  section { padding-block: clamp(2.5rem, 5vw, 4.5rem); border-bottom: 1px solid var(--rule); }
+  section:last-of-type { border-bottom: none; }
+
+  .section-label {
+    font-family: var(--ff-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* ─── Prose ─────────────────────────────────────────────────── */
+  .prose p {
+    margin-bottom: 1.1rem;
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    line-height: 1.78;
+  }
+  /* Constrain line length only inside narrower column contexts */
+  .two-col .prose p {
+    max-width: 52ch;
+  }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose h3 {
+    font-family: var(--ff-display);
+    font-weight: 500;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+  .prose h3:first-child { margin-top: 0; }
+
+  /* ─── Two-col ───────────────────────────────────────────────── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 4rem;
+    align-items: start;
+  }
+  @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; gap: 2rem 0; } }
+
+  /* ─── Framework pills ───────────────────────────────────────── */
+  .framework-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.25rem; }
+  .pill {
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+    padding: 0.3em 0.7em;
+    white-space: nowrap;
+  }
+
+  /* ─── Data sources ──────────────────────────────────────────── */
+  .data-sources {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .data-source-item {
+    padding-block: 1.875rem;
+    border-top: 1px solid var(--border);
+  }
+  .data-source-item:first-child { border-top: none; padding-top: 0; }
+  .data-source-header {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.625rem 1.125rem;
+    margin-bottom: 0.875rem;
+  }
+  .data-source-tag {
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+    padding: 0.2em 0.6em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .data-source-name {
+    font-family: var(--ff-display);
+    font-weight: 500;
+    font-size: 1.125rem;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+  .data-source-desc {
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    line-height: 1.78;
+    margin-bottom: 1rem;
+  }
+  .data-source-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem 2rem;
+    padding-top: 0.875rem;
+    border-top: 1px solid var(--rule);
+  }
+  .data-meta-item {
+    font-family: var(--ff-mono);
+    font-size: 0.625rem;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+  }
+  .data-meta-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-right: 0.35em;
+  }
+
+  /* ─── Setup notice ──────────────────────────────────────────── */
+  .setup-notice {
+    background: color-mix(in srgb, var(--accent-warm) 7%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--accent-warm) 30%, transparent);
+    padding: 1rem 1.375rem;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 0.875rem;
+    align-items: flex-start;
+  }
+  .setup-notice-icon {
+    color: var(--accent-warm);
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+  .setup-notice-body {}
+  .setup-notice-head {
+    font-family: var(--ff-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-warm);
+    margin-bottom: 0.3rem;
+  }
+  .setup-notice-text {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+  .setup-notice-text code {
+    font-family: var(--ff-mono);
+    font-size: 0.8em;
+    background: color-mix(in srgb, var(--accent-warm) 10%, transparent);
+    padding: 0.1em 0.35em;
+    color: var(--accent-warm);
+  }
+  .setup-steps {
+    margin-top: 0.5rem;
+    padding-left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .setup-steps li {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* ─── Visualization tabs ────────────────────────────────────── */
+  .viz-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .viz-tabs::-webkit-scrollbar { display: none; }
+
+  .viz-tab {
+    font-family: var(--ff-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 0.75rem 1.375rem 0.6875rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+    margin-bottom: -1px;
+  }
+  .viz-tab:hover { color: var(--text-secondary); }
+  .viz-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .viz-panel {
+    display: none;
+    border: 1px solid var(--border);
+    border-top: none;
+    background: var(--surface);
+  }
+  .viz-panel.active { display: block; }
+
+  .viz-panel-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .viz-panel-title {
+    font-family: var(--ff-display);
+    font-weight: 500;
+    font-size: 1.0625rem;
+    color: var(--text-primary);
+  }
+  .viz-panel-desc {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    max-width: 52ch;
+  }
+  .viz-open-link {
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .viz-open-link:hover { color: var(--accent-hover); text-decoration: none; }
+
+  .viz-frame-wrap {
+    position: relative;
+    width: 100%;
+  }
+  .viz-frame-wrap iframe {
+    width: 100%;
+    border: none;
+    display: block;
+  }
+
+  /* Loading / error state */
+  .viz-fallback {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 3rem 2rem;
+    text-align: center;
+    background: var(--surface-alt);
+  }
+  .viz-fallback-icon { color: var(--border); }
+  .viz-fallback-msg {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    max-width: 38ch;
+    line-height: 1.65;
+  }
+  .viz-fallback a { color: var(--accent); }
+
+  /* ─── Cluster image ─────────────────────────────────────────── */
+  .cluster-figure {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .cluster-figure img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .cluster-caption {
+    padding: 0.875rem 1.25rem;
+    border-top: 1px solid var(--rule);
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* ─── Milestone tracker ─────────────────────────────────────── */
+  .milestone-track {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 0.5rem;
+    position: relative;
+  }
+  .milestone-track::before {
+    content: '';
+    position: absolute;
+    left: 1.0625rem;
+    top: 2.125rem;
+    bottom: 2.125rem;
+    width: 1px;
+    background: var(--border);
+  }
+  .milestone {
+    display: grid;
+    grid-template-columns: 2.125rem 1fr;
+    gap: 0 1.375rem;
+    padding-block: 0.25rem 2rem;
+    position: relative;
+  }
+  .milestone:last-child { padding-bottom: 0; }
+  .milestone-dot {
+    width: 2.125rem;
+    height: 2.125rem;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    margin-top: 0.1rem;
+  }
+  .milestone-dot.active { border-color: var(--accent); background: var(--accent-light); }
+  .milestone-content { padding-top: 0.125rem; }
+  .milestone-number {
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+  }
+  .milestone-name {
+    font-family: var(--ff-display);
+    font-weight: 500;
+    font-size: 1.1875rem;
+    color: var(--text-primary);
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+  .milestone-desc {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    line-height: 1.72;
+    max-width: 54ch;
+  }
+  .milestone-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    margin-top: 0.625rem;
+    padding: 0.2em 0.6em;
+    border: 1px solid;
+  }
+  .status-active { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 35%, transparent); background: var(--accent-light); }
+  .status-upcoming { color: var(--text-muted); border-color: var(--border); background: var(--surface-alt); }
+  .status-dot { width: 0.375rem; height: 0.375rem; border-radius: 50%; background: currentColor; display: inline-block; flex-shrink: 0; }
+  .status-active .status-dot { animation: pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+  @media (prefers-reduced-motion: reduce) { .status-active .status-dot { animation: none; } }
+
+  /* ─── Repo banner ───────────────────────────────────────────── */
+  .repo-banner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1.25rem 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2rem;
+    transition: background 0.2s;
+    text-decoration: none;
+  }
+  .repo-banner:hover { background: var(--surface-alt); text-decoration: none; }
+  .repo-info { display: flex; align-items: center; gap: 0.875rem; }
+  .repo-icon { color: var(--text-muted); flex-shrink: 0; }
+  .repo-name { font-family: var(--ff-mono); font-size: 0.875rem; color: var(--text-primary); font-weight: 500; }
+  .repo-desc { font-size: 0.8125rem; color: var(--text-muted); margin-top: 0.15rem; }
+  .repo-link {
+    font-family: var(--ff-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* ─── Footer ────────────────────────────────────────────────── */
+  footer {
+    padding-block: 2.25rem 3rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    border-top: 1px solid var(--rule);
+    margin-top: 1rem;
+  }
+  .footer-name { font-family: var(--ff-display); font-size: 0.9375rem; color: var(--text-muted); }
+  .footer-links { display: flex; gap: 1.5rem; list-style: none; }
+  .footer-links a { font-family: var(--ff-mono); font-size: 0.6875rem; letter-spacing: 0.06em; color: var(--text-muted); }
+  .footer-links a:hover { color: var(--accent); text-decoration: none; }
+  
+  /* ─── RegiMoE page additions (same tokens as the rest of the site) ─── */
+  .milestone-dot.done { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+  .status-done { color: var(--accent); }
+  .status-done .status-dot { background: var(--accent); }
+  .status-late { color: var(--accent-warm); }
+  .status-late .status-dot { background: var(--accent-warm); }
+  .milestone-date { font-family: var(--ff-mono); font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 0.35rem; }
+  .progress-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: 1rem; margin-top: 1.25rem; }
+  .progress-stat { background: var(--surface); border: 1px solid var(--border); padding: 1rem 1.1rem; min-width: 0; }
+  .progress-value { font-family: var(--ff-display); font-size: 2.1rem; font-weight: 500; line-height: 1.05; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+  .progress-label { font-family: var(--ff-mono); font-size: 0.625rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); margin-top: 0.35rem; }
+  .progress-note { font-size: 0.8125rem; color: var(--text-secondary); margin-top: 0.25rem; }
+  .pace-bar { margin-top: 1.5rem; }
+  .pace-track { position: relative; height: 0.6rem; background: var(--surface-alt); border: 1px solid var(--border); }
+  .pace-fill { position: absolute; inset: 0 auto 0 0; background: var(--accent); }
+  .pace-plan { position: absolute; top: -0.35rem; bottom: -0.35rem; width: 2px; background: var(--accent-warm); }
+  .pace-legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; margin-top: 0.6rem; font-size: 0.75rem; color: var(--text-secondary); }
+  .pace-legend span { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .pace-swatch { width: 0.7rem; height: 0.7rem; display: inline-block; }
+  .week-table-wrap { overflow-x: auto; margin-top: 1.25rem; border: 1px solid var(--border); background: var(--surface); }
+  .week-table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; min-width: 34rem; }
+  .week-table th { text-align: left; font-family: var(--ff-mono); font-size: 0.625rem; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); padding: 0.65rem 0.85rem; border-bottom: 1px solid var(--border); background: var(--surface-alt); }
+  .week-table td { padding: 0.65rem 0.85rem; border-bottom: 1px solid var(--rule); vertical-align: top; color: var(--text-secondary); }
+  .week-table tr:last-child td { border-bottom: 0; }
+  .week-table td:first-child { font-family: var(--ff-mono); font-size: 0.75rem; color: var(--text-primary); white-space: nowrap; }
+  .week-table tr.is-now td { background: var(--accent-light); }
+  .week-table .wk-dates { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .asof { font-family: var(--ff-mono); font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-top: 1rem; }
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Site navigation">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-name">LaKeta L. Kemp</a>
+    <a href="../index.html#projects" class="nav-back" aria-label="Back to all projects">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+      All Projects
+    </a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- ─ Project Header ────────────────────────────────────────── -->
+  <header class="project-header">
+    <div class="project-eyebrow">
+      <span class="badge badge-award">GRMP Fellowship</span>
+      <span class="badge badge-status">Active &middot; Oct&ndash;Dec 2026</span>
+    </div>
+    <h1 class="project-title">RegiMoE<br><em>Regime-Gated Downscaling</em></h1>
+    <p class="project-subtitle">RegiMoE is a regime-gated mixture of experts: a gating network classifies each day's thermodynamic regime and routes it to regime-specialised experts, so similar environmental conditions share a predictor. It performs statistical downscaling and bias correction of coarse ERA5 reanalysis against ground-station observations, to make heat risk visible where displaced and under-monitored people live, in support of their rights to life, security and an adequate standard of living (UDHR Articles 3 and 25).</p>
+    <div class="project-meta-row">
+      <div class="meta-item">
+        <span class="meta-label">Sponsoring Initiative</span>
+        <span class="meta-value">Montgomery Graduate Fellowships Fund &middot; UCSD GRMP</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Investigator</span>
+        <span class="meta-value">LaKeta L. Kemp, UCSD HDSI</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Period</span>
+        <span class="meta-value">October&ndash;December 2026</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Repository</span>
+        <span class="meta-value">Private until the v0.1.0 release</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─ Overview ──────────────────────────────────────────────── -->
+  <section id="overview">
+    <p class="section-label">Overview</p>
+    <div class="prose">
+      <p>Coarse reanalysis smooths away the local heat that matters most to people living in camps, settlements and under-monitored regions. A single statistical correction applied everywhere also averages over very different weather: a humid coastal day, a dry desert afternoon and a stable mountain night carry different biases. RegiMoE learns those differences explicitly. A gate reads the day's thermodynamic state as anomalies from climatology and assigns it softly to a small set of regimes; each regime has its own expert that corrects the coarse field toward what ground stations record.</p>
+      <p>The work builds directly on the physics-informed SRGAN proposal for this fellowship, which introduced a Thermodynamic Regime Classifier and regional calibrators. Here the regime gate becomes the core of the model and is tested as rigorously as any baseline. Adversarial fine-tuning and gridded super-resolution are deferred to Spring 2027 so that this term delivers station-validated results first.</p>
+      <p>The project is developed in a California sandbox, where stations are dense and climates diverse, then transferred to the Horn of Africa, where stations are few and the humanitarian stakes are high. Every claim is judged on stations the model has never seen, in a year held out until the baselines are frozen.</p>
+    </div>
+  </section>
+
+  <!-- ─ Methodology ───────────────────────────────────────────── -->
+  <section id="methodology">
+    <p class="section-label">Methodology</p>
+    <div class="two-col">
+      <div class="prose">
+        <h3>Regime-Gated Mixture of Experts</h3>
+        <p>The gate sees only climatological anomalies of temperature, humidity, pressure, wind, radiation and cloud, plus one solar term. It never sees latitude, longitude, station identity or the calendar, and falsifiable tests check that it has not learned them indirectly. Experts share a trunk and specialise in regime-specific heads, trained with a load-balancing term so that no single expert takes over.</p>
+        <div class="framework-pills">
+          <span class="pill">Soft Gating</span>
+          <span class="pill">Load Balancing</span>
+          <span class="pill">Gate-Health Diagnostics</span>
+          <span class="pill">Uncertainty Head</span>
+        </div>
+      </div>
+      <div class="prose">
+        <h3>Downscaling and Evaluation</h3>
+        <p>Models predict the residual between station observations and the elevation-corrected coarse value, then apply to the 0.1&deg; grid for maps. Each result is compared with a frozen ladder of baselines, including quantile mapping, gradient-boosted trees and a single network matched in size and tuning effort, using leave-station-out and spatial-block cross-validation with bootstrap confidence intervals.</p>
+        <div class="framework-pills">
+          <span class="pill">ERA5 &rarr; Stations</span>
+          <span class="pill">Leave-Station-Out</span>
+          <span class="pill">Spatial Blocks</span>
+          <span class="pill">Extremes &amp; Heat-Wave Days</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─ Data ──────────────────────────────────────────────────── -->
+  <section id="data">
+    <p class="section-label">Data Description</p>
+    <div class="data-sources">
+      <div class="data-source-item">
+        <div class="data-source-header">
+          <span class="data-source-tag">Coarse Model Input</span>
+          <h3 class="data-source-name">ERA5 Reanalysis (0.25&deg;)</h3>
+        </div>
+        <p class="data-source-desc">Hourly ECMWF reanalysis reduced on Google Earth Engine to daily maximum, minimum and mean temperature, humidity, pressure, wind, radiation, cloud and boundary-layer height on each region's local solar day. Earth Engine values were verified against an independent ARCO-ERA5 copy to within 0.001 K.</p>
+        <div class="data-source-meta"><span class="data-meta-item"><span class="data-meta-label">Provider</span> ECMWF / Copernicus C3S</span><span class="data-meta-item"><span class="data-meta-label">Access</span> Google Earth Engine</span><span class="data-meta-item"><span class="data-meta-label">Period</span> 2018&ndash;2025</span></div>
+      </div>
+      <div class="data-source-item">
+        <div class="data-source-header">
+          <span class="data-source-tag">Grid Definition</span>
+          <h3 class="data-source-name">ERA5-Land (0.1&deg;)</h3>
+        </div>
+        <p class="data-source-desc">The land-surface replay of ERA5 at finer resolution, used to define the downscaling grid, as an input-resolution ablation, and as a plausibility reference. Coastal stations whose nearest 0.1&deg; cell is ocean fall back to the nearest land cell.</p>
+        <div class="data-source-meta"><span class="data-meta-item"><span class="data-meta-label">Provider</span> ECMWF / Copernicus C3S</span><span class="data-meta-item"><span class="data-meta-label">Access</span> Google Earth Engine</span><span class="data-meta-item"><span class="data-meta-label">Period</span> 2018&ndash;2025</span></div>
+      </div>
+      <div class="data-source-item">
+        <div class="data-source-header">
+          <span class="data-source-tag">Ground Truth &middot; Sandbox</span>
+          <h3 class="data-source-name">GHCN-Daily, California Box</h3>
+        </div>
+        <p class="data-source-desc">Daily maximum and minimum temperature from 490 stations between 32&ndash;42.5&deg;N and 125&ndash;114&deg;W, spanning coastal, desert, valley and mountain regimes. Morning observers are aligned to the afternoon they report.</p>
+        <div class="data-source-meta"><span class="data-meta-item"><span class="data-meta-label">Provider</span> NOAA NCEI</span><span class="data-meta-item"><span class="data-meta-label">Stations</span> 490</span><span class="data-meta-item"><span class="data-meta-label">Role</span> Training and evaluation</span></div>
+      </div>
+      <div class="data-source-item">
+        <div class="data-source-header">
+          <span class="data-source-tag">Ground Truth &middot; Transfer</span>
+          <h3 class="data-source-name">GHCNh and ISD, Horn of Africa</h3>
+        </div>
+        <p class="data-source-desc">Hourly synoptic reports turned into daily extremes on a fixed sampling schedule, with per-station eligibility for maximum and minimum temperature. Named humanitarian sites include Kakuma and Kalobeyei, Dadaab, and Nairobi's informal settlements.</p>
+        <div class="data-source-meta"><span class="data-meta-item"><span class="data-meta-label">Provider</span> NOAA NCEI</span><span class="data-meta-item"><span class="data-meta-label">Stations entering</span> 31</span><span class="data-meta-item"><span class="data-meta-label">Role</span> Transfer evaluation</span></div>
+      </div>
+      <div class="data-source-item">
+        <div class="data-source-header">
+          <span class="data-source-tag">Covariates &middot; Figures</span>
+          <h3 class="data-source-name">MODIS and VIIRS Land Products</h3>
+        </div>
+        <p class="data-source-desc">Vegetation, land cover, built-up and water indices as expert-only covariates, never inputs to the regime gate. Satellite land-surface temperature appears only in context figures, not as a model input.</p>
+        <div class="data-source-meta"><span class="data-meta-item"><span class="data-meta-label">Provider</span> NASA LP DAAC</span><span class="data-meta-item"><span class="data-meta-label">Access</span> Google Earth Engine</span><span class="data-meta-item"><span class="data-meta-label">Role</span> Covariates and figures</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─ Progress ──────────────────────────────────────────────── -->
+  <section id="progress">
+    <p class="section-label">Progress</p>
+    <div class="prose">
+      <p>The work plan breaks the term into 52 task cards with estimated hours, nine weekly sprints and a Wednesday checkpoint with the advisor each week. The data foundation finished ahead of plan; the code that builds on it slipped about five days during the first week, so the demonstration of the minimum viable pipeline moved from October 23 to October 28. The schedule is re-planned on October 24.</p>
+    </div>
+    <div class="progress-row">
+      <div class="progress-stat"><div class="progress-value">6 / 52</div><div class="progress-label">Task cards complete</div><div class="progress-note">7 more in progress</div></div>
+      <div class="progress-stat"><div class="progress-value">38 h</div><div class="progress-label">Card-hours complete</div><div class="progress-note">of 82 h due by Oct 20 in the plan</div></div>
+      <div class="progress-stat"><div class="progress-value">32</div><div class="progress-label">Gridded year stacks built</div><div class="progress-note">both regions, 2018&ndash;2025</div></div>
+      <div class="progress-stat"><div class="progress-value">52</div><div class="progress-label">Days to delivery</div><div class="progress-note">from Oct 20 to Dec 11</div></div>
+    </div>
+    <div class="pace-bar" role="img" aria-label="Card-hours complete compared with the plan's hours due by October 20, out of 244 planned hours in total">
+      <div class="pace-track">
+        <div class="pace-fill" style="width: 15.6%"></div>
+        <div class="pace-plan" style="left: 33.6%"></div>
+      </div>
+      <div class="pace-legend">
+        <span><span class="pace-swatch" style="background: var(--accent)"></span>Complete: 38 of 244 planned card-hours</span>
+        <span><span class="pace-swatch" style="background: var(--accent-warm)"></span>Due by Oct 20 in the original plan: 82 h</span>
+      </div>
+    </div>
+    <div class="week-table-wrap">
+      <table class="week-table">
+        <thead><tr><th>Week</th><th>Dates</th><th>Focus</th><th>Checkpoint</th></tr></thead>
+        <tbody>
+          <tr><td>W1</td><td class="wk-dates">Oct 12&ndash;18</td><td>Research codebase, station and reanalysis data, figure tools</td><td>Oct 14 &middot; first live checkpoint</td></tr>
+          <tr class="is-now"><td>W2</td><td class="wk-dates">Oct 19&ndash;25</td><td>Ingest, baselines, splits, first figures</td><td>Oct 21 &middot; week-1 review</td></tr>
+          <tr><td>W3</td><td class="wk-dates">Oct 26&ndash;Nov 1</td><td>MVP demo, regimes, first mixture-of-experts run</td><td>Oct 28 &middot; MVP demo</td></tr>
+          <tr><td>W4</td><td class="wk-dates">Nov 2&ndash;8</td><td>Mixture-of-experts v1, ladder freeze, gridded inference</td><td>Nov 4 &middot; ladder freeze</td></tr>
+          <tr><td>W5</td><td class="wk-dates">Nov 9&ndash;15</td><td>Ablations, uncertainty, transfer, demo deck</td><td>No checkpoint (Veterans Day)</td></tr>
+          <tr><td>W6</td><td class="wk-dates">Nov 16&ndash;22</td><td>Acceptance review, heat-wave animations</td><td>Nov 18 &middot; acceptance review</td></tr>
+          <tr><td>W7</td><td class="wk-dates">Nov 23&ndash;29</td><td>Full results table, three-seed re-runs</td><td>Nov 25 &middot; animation review</td></tr>
+          <tr><td>W8</td><td class="wk-dates">Nov 30&ndash;Dec 6</td><td>Buffer week and results freeze</td><td>Dec 2 &middot; freeze sign-off</td></tr>
+          <tr><td>W9</td><td class="wk-dates">Dec 7&ndash;11</td><td>Delivery</td><td>Dec 9 &middot; manuscript read</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="asof">Status as of October 20, 2026</p>
+  </section>
+
+  <!-- ─ Milestones ────────────────────────────────────────────── -->
+  <section id="milestones">
+    <p class="section-label">Project Milestones</p>
+    <div class="milestone-track" role="list">
+      <div class="milestone" role="listitem">
+        <div class="milestone-dot active" aria-label="In progress, behind plan"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="milestone-content">
+          <p class="milestone-number">Milestone 1</p>
+          <p class="milestone-date">Oct 12 &ndash; Oct 23</p>
+          <h2 class="milestone-name">Data Foundation and Research Scaffold</h2>
+          <p class="milestone-desc">Station rosters for the California sandbox (490 GHCN-Daily stations in 334 ERA5 cells) and the Horn of Africa (31 GHCNh stations, 16 in the Kenya core). Daily ERA5 and ERA5-Land values on each station's local solar day, exported through Google Earth Engine for 2018&ndash;2025, and gridded daily stacks for both regions. A tested research codebase with continuous integration. The data exports and grids are complete; the ingest and baseline cards are finishing.</p>
+          <span class="milestone-status status-late">
+            <span class="status-dot" aria-hidden="true"></span>
+            In Progress &middot; Behind Plan
+          </span>
+        </div>
+      </div>
+      <div class="milestone" role="listitem">
+        <div class="milestone-dot upcoming" aria-label="Upcoming"></div>
+        <div class="milestone-content">
+          <p class="milestone-number">Milestone 2</p>
+          <p class="milestone-date">Oct 28 &middot; Demo</p>
+          <h2 class="milestone-name">Minimum Viable Pipeline: Baselines and First Figures</h2>
+          <p class="milestone-desc">An end-to-end chain from data to evaluation to figures: interpolation and lapse-rate baselines, quantile mapping, a gradient-boosted tree baseline, block-bootstrap confidence intervals, leakage-audited splits, and the first maps and animation in a figure gallery. All results on the 2024 validation year; the 2025 test year stays sealed.</p>
+          <span class="milestone-status status-upcoming">
+            <span class="status-dot" aria-hidden="true"></span>
+            Upcoming
+          </span>
+        </div>
+      </div>
+      <div class="milestone" role="listitem">
+        <div class="milestone-dot upcoming" aria-label="Upcoming"></div>
+        <div class="milestone-content">
+          <p class="milestone-number">Milestone 3</p>
+          <p class="milestone-date">Oct 30</p>
+          <h2 class="milestone-name">Thermodynamic Regimes and the First Mixture-of-Experts Run</h2>
+          <p class="milestone-desc">Regimes defined from climatological anomalies of temperature, humidity, pressure, wind, radiation and cloud, never from geography or the calendar. A first soft-gated mixture of experts trained against a parameter-matched single network, with gate-health diagnostics: expert utilisation, gate sharpness, and tests that the gate has not learned location or season by the back door.</p>
+          <span class="milestone-status status-upcoming">
+            <span class="status-dot" aria-hidden="true"></span>
+            Upcoming
+          </span>
+        </div>
+      </div>
+      <div class="milestone" role="listitem">
+        <div class="milestone-dot upcoming" aria-label="Upcoming"></div>
+        <div class="milestone-content">
+          <p class="milestone-number">Milestone 4</p>
+          <p class="milestone-date">Nov 4</p>
+          <h2 class="milestone-name">Baseline Ladder Frozen</h2>
+          <p class="milestone-desc">Every baseline and the mixture-of-experts configuration fixed from validation results and ratified at a live checkpoint before any model touches the test year. Test-fold runs begin the next day, so no result can be tuned on the data it is judged on.</p>
+          <span class="milestone-status status-upcoming">
+            <span class="status-dot" aria-hidden="true"></span>
+            Upcoming
+          </span>
+        </div>
+      </div>
+      <div class="milestone" role="listitem">
+        <div class="milestone-dot upcoming" aria-label="Upcoming"></div>
+        <div class="milestone-content">
+          <p class="milestone-number">Milestone 5</p>
+          <p class="milestone-date">Nov 13</p>
+          <h2 class="milestone-name">Transfer to the Horn of Africa and Satellite Context</h2>
+          <p class="milestone-desc">California-trained models applied zero-shot and fine-tuned to the Horn of Africa, reported inside and outside their area of applicability. MODIS and VIIRS land-surface temperature figures placed beside the downscaled maximum-temperature fields, and a demonstration deck.</p>
+          <span class="milestone-status status-upcoming">
+            <span class="status-dot" aria-hidden="true"></span>
+            Upcoming
+          </span>
+        </div>
+      </div>
+      <div class="milestone" role="listitem">
+        <div class="milestone-dot upcoming" aria-label="Upcoming"></div>
+        <div class="milestone-content">
+          <p class="milestone-number">Milestone 6</p>
+          <p class="milestone-date">Nov 18 &ndash; Nov 20</p>
+          <h2 class="milestone-name">Mixture-of-Experts Acceptance Review and Heat-Wave Animations</h2>
+          <p class="milestone-desc">A pre-registered test of whether regime gating improves on the strongest baselines, overall and in the regime where the single network struggles most, with the result stated plainly either way. Heat-wave case-study animations for California and the Kenya core, comparing the coarse reanalysis, the downscaled field and station observations day by day.</p>
+          <span class="milestone-status status-upcoming">
+            <span class="status-dot" aria-hidden="true"></span>
+            Upcoming
+          </span>
+        </div>
+      </div>
+      <div class="milestone" role="listitem">
+        <div class="milestone-dot upcoming" aria-label="Upcoming"></div>
+        <div class="milestone-content">
+          <p class="milestone-number">Milestone 7</p>
+          <p class="milestone-date">Dec 4</p>
+          <h2 class="milestone-name">Results Freeze</h2>
+          <p class="milestone-desc">Three-seed re-runs of every headline model, the full results table, and a frozen figure gallery regenerated from one run manifest.</p>
+          <span class="milestone-status status-upcoming">
+            <span class="status-dot" aria-hidden="true"></span>
+            Upcoming
+          </span>
+        </div>
+      </div>
+      <div class="milestone" role="listitem">
+        <div class="milestone-dot upcoming" aria-label="Upcoming"></div>
+        <div class="milestone-content">
+          <p class="milestone-number">Milestone 8</p>
+          <p class="milestone-date">Dec 11</p>
+          <h2 class="milestone-name">Delivery</h2>
+          <p class="milestone-desc">A tagged release of the codebase, the downscaled datasets, the figure and animation gallery, and a report draft that sets up the Spring 2027 dissertation proposal.</p>
+          <span class="milestone-status status-upcoming">
+            <span class="status-dot" aria-hidden="true"></span>
+            Upcoming
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <p class="footer-name">LaKeta L. Kemp</p>
+  <ul class="footer-links">
+    <li><a href="../index.html">Portfolio</a></li>
+    <li><a href="../index.html#research">Research</a></li>
+    <li><a href="mailto:lkemp@ucsd.edu">Contact</a></li>
+  </ul>
+</footer>
+
+</body>
+</html>

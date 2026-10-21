@@ -609,7 +609,11 @@ footer {
         <p class="project-type">GRMP Fellowship &middot; Fall 2026</p>
         <h3 class="project-title">Validating Climate Data to Protect the Rights and Health of Displaced Populations</h3>
         <p class="project-meta">Montgomery Graduate Fellowships Fund &middot; UCSD GRMP</p>
-        <p class="project-desc">ERA5 reanalysis data systematically underperforms in the high-heterogeneity environments that characterize displacement sites across the Global South. This project develops a physics-informed SRGAN to downscale coarse ERA5 fields to site-specific resolution suitable for displacement monitoring. A Thermodynamic Regime Classifier partitions inputs by thermodynamic state; WGAN-GP loss stabilizes adversarial training; physics-consistency constraints enforce conservation laws the network cannot reliably infer from data alone.</p>
+        <p class="project-desc">ERA5 reanalysis data systematically underperforms in the high-heterogeneity environments that characterize displacement sites across the Global South. RegiMoE, the Fall 2026 phase of this project, downscales and bias-corrects coarse ERA5 fields against ground-station observations with a regime-gated mixture of experts: a gating network classifies each day&rsquo;s thermodynamic regime from climatological anomalies and routes it to regime-specialised experts, so similar environmental conditions share a predictor. Developed in a California sandbox and transferred to the Horn of Africa, every result is judged on held-out stations against a frozen ladder of baselines. The physics-informed SRGAN and adversarial fine-tuning follow in Spring 2027.</p>
+        <div class="project-link-row" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+          <a href="projects/regimoe.html">RegiMoE Project Detail &amp; Milestones &rarr;</a>
+          <span style="font-family:var(--ff-mono);font-size:0.5625rem;letter-spacing:0.09em;text-transform:uppercase;color:var(--accent);background:var(--accent-light);border:1px solid color-mix(in srgb, var(--accent) 30%, transparent);padding:0.2em 0.6em;">Milestone 1 &bull; In Progress</span>
+        </div>
       </article>
       <article class="project-card">
         <p class="project-type">Strategic Convene and Influence Award &middot; 2026&ndash;2027</p>

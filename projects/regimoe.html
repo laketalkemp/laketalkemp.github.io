@@ -710,7 +710,7 @@
     <div class="prose">
       <p>Coarse reanalysis smooths away the local heat that matters most to people living in camps, settlements and under-monitored regions. A single statistical correction applied everywhere also averages over very different weather: a humid coastal day, a dry desert afternoon and a stable mountain night carry different biases. RegiMoE learns those differences explicitly. A gate reads the day's thermodynamic state as anomalies from climatology and assigns it softly to a small set of regimes; each regime has its own expert that corrects the coarse field toward what ground stations record.</p>
       <p>The work builds directly on the physics-informed SRGAN proposal for this fellowship, which introduced a Thermodynamic Regime Classifier and regional calibrators. Here the regime gate becomes the core of the model and is tested as rigorously as any baseline. Adversarial fine-tuning and gridded super-resolution are deferred to Spring 2027 so that this term delivers station-validated results first.</p>
-      <p>The project is developed in a California sandbox, where stations are dense and climates diverse, then transferred to the Horn of Africa, where stations are few and the humanitarian stakes are high. Every claim is judged on stations the model has never seen, in a year held out until the baselines are frozen.</p>
+      <p>The project is developed in a California sandbox, where stations are dense and climates diverse, then transferred to Afghanistan, where conflict has thinned the station record, and to the Philippines, where typhoons and extreme heat drive displacement. Every claim is judged on stations the model has never seen, in a year held out until the baselines are frozen.</p>
     </div>
   </section>
 
@@ -772,10 +772,10 @@
       <div class="data-source-item">
         <div class="data-source-header">
           <span class="data-source-tag">Ground Truth &middot; Transfer</span>
-          <h3 class="data-source-name">GHCNh and ISD, Horn of Africa</h3>
+          <h3 class="data-source-name">GHCNh and ISD, Afghanistan and the Philippines</h3>
         </div>
-        <p class="data-source-desc">Hourly synoptic reports turned into daily extremes on a fixed sampling schedule, with per-station eligibility for maximum and minimum temperature. Named humanitarian sites include Kakuma and Kalobeyei, Dadaab, and Nairobi's informal settlements.</p>
-        <div class="data-source-meta"><span class="data-meta-item"><span class="data-meta-label">Provider</span> NOAA NCEI</span><span class="data-meta-item"><span class="data-meta-label">Stations entering</span> 31</span><span class="data-meta-item"><span class="data-meta-label">Role</span> Transfer evaluation</span></div>
+        <p class="data-source-desc">Hourly synoptic reports turned into daily extremes on a fixed sampling schedule, with per-station eligibility for maximum and minimum temperature. Afghanistan&rsquo;s in-country record thins sharply after 2021, so its region includes neighbouring stations in Pakistan, Tajikistan, Turkmenistan, Uzbekistan and Iran, and in-country evaluation uses 2018&ndash;2021. About 50 Philippine stations report through 2025. Named humanitarian sites include Kabul and Herat, Marawi and Lanao del Sur, and Tacloban.</p>
+        <div class="data-source-meta"><span class="data-meta-item"><span class="data-meta-label">Provider</span> NOAA NCEI</span><span class="data-meta-item"><span class="data-meta-label">Stations</span> ~50 Philippines &middot; 79 in the Afghanistan region</span><span class="data-meta-item"><span class="data-meta-label">Role</span> Transfer evaluation</span></div>
       </div>
       <div class="data-source-item">
         <div class="data-source-header">
@@ -792,32 +792,32 @@
   <section id="progress">
     <p class="section-label">Progress</p>
     <div class="prose">
-      <p>The work plan breaks the term into 52 task cards with estimated hours, nine weekly sprints and a Wednesday checkpoint with the advisor each week. The data foundation finished ahead of plan; the code that builds on it slipped about five days during the first week, so the demonstration of the minimum viable pipeline moved from October 23 to October 28. The schedule is re-planned on October 24.</p>
+      <p>The work plan breaks the term into 52 task cards with estimated hours, nine weekly sprints and a weekly Wednesday checkpoint. The data foundation finished ahead of plan; the modelling cards have slipped, and on October 27 the transfer regions changed from the Horn of Africa to Afghanistan and the Philippines. The scope through the December 11 delivery is being re-set by the principal investigator, so the dates below for November are provisional.</p>
     </div>
     <div class="progress-row">
-      <div class="progress-stat"><div class="progress-value">6 / 52</div><div class="progress-label">Task cards complete</div><div class="progress-note">7 more in progress</div></div>
-      <div class="progress-stat"><div class="progress-value">38 h</div><div class="progress-label">Card-hours complete</div><div class="progress-note">of 82 h due by Oct 20 in the plan</div></div>
+      <div class="progress-stat"><div class="progress-value">9 / 52</div><div class="progress-label">Task cards complete</div><div class="progress-note">2 more in progress</div></div>
+      <div class="progress-stat"><div class="progress-value">63 h</div><div class="progress-label">Card-hours complete</div><div class="progress-note">of 235 h due by Nov 7 in the original plan</div></div>
       <div class="progress-stat"><div class="progress-value">32</div><div class="progress-label">Gridded year stacks built</div><div class="progress-note">both regions, 2018&ndash;2025</div></div>
-      <div class="progress-stat"><div class="progress-value">52</div><div class="progress-label">Days to delivery</div><div class="progress-note">from Oct 20 to Dec 11</div></div>
+      <div class="progress-stat"><div class="progress-value">34</div><div class="progress-label">Days to delivery</div><div class="progress-note">from Nov 7 to Dec 11</div></div>
     </div>
-    <div class="pace-bar" role="img" aria-label="Card-hours complete compared with the plan's hours due by October 20, out of 244 planned hours in total">
+    <div class="pace-bar" role="img" aria-label="Card-hours complete compared with the plan's hours due by November 7, out of 244 planned hours in total">
       <div class="pace-track">
-        <div class="pace-fill" style="width: 15.6%"></div>
-        <div class="pace-plan" style="left: 33.6%"></div>
+        <div class="pace-fill" style="width: 25.8%"></div>
+        <div class="pace-plan" style="left: 96.3%"></div>
       </div>
       <div class="pace-legend">
-        <span><span class="pace-swatch" style="background: var(--accent)"></span>Complete: 38 of 244 planned card-hours</span>
-        <span><span class="pace-swatch" style="background: var(--accent-warm)"></span>Due by Oct 20 in the original plan: 82 h</span>
+        <span><span class="pace-swatch" style="background: var(--accent)"></span>Complete: 63 of 244 planned card-hours</span>
+        <span><span class="pace-swatch" style="background: var(--accent-warm)"></span>Due by Nov 7 in the original plan: 235 h</span>
       </div>
     </div>
     <div class="week-table-wrap">
       <table class="week-table">
-        <thead><tr><th>Week</th><th>Dates</th><th>Focus</th><th>Checkpoint</th></tr></thead>
+        <thead><tr><th>Week</th><th>Dates</th><th>Original plan</th><th>Checkpoint</th></tr></thead>
         <tbody>
           <tr><td>W1</td><td class="wk-dates">Oct 12&ndash;18</td><td>Research codebase, station and reanalysis data, figure tools</td><td>Oct 14 &middot; first live checkpoint</td></tr>
-          <tr class="is-now"><td>W2</td><td class="wk-dates">Oct 19&ndash;25</td><td>Ingest, baselines, splits, first figures</td><td>Oct 21 &middot; week-1 review</td></tr>
+          <tr><td>W2</td><td class="wk-dates">Oct 19&ndash;25</td><td>Ingest, baselines, splits, first figures</td><td>Oct 21 &middot; week-1 review</td></tr>
           <tr><td>W3</td><td class="wk-dates">Oct 26&ndash;Nov 1</td><td>MVP demo, regimes, first mixture-of-experts run</td><td>Oct 28 &middot; MVP demo</td></tr>
-          <tr><td>W4</td><td class="wk-dates">Nov 2&ndash;8</td><td>Mixture-of-experts v1, ladder freeze, gridded inference</td><td>Nov 4 &middot; ladder freeze</td></tr>
+          <tr class="is-now"><td>W4</td><td class="wk-dates">Nov 2&ndash;8</td><td>Mixture-of-experts v1, ladder freeze, gridded inference</td><td>Nov 4 &middot; ladder freeze</td></tr>
           <tr><td>W5</td><td class="wk-dates">Nov 9&ndash;15</td><td>Ablations, uncertainty, transfer, demo deck</td><td>No checkpoint (Veterans Day)</td></tr>
           <tr><td>W6</td><td class="wk-dates">Nov 16&ndash;22</td><td>Acceptance review, heat-wave animations</td><td>Nov 18 &middot; acceptance review</td></tr>
           <tr><td>W7</td><td class="wk-dates">Nov 23&ndash;29</td><td>Full results table, three-seed re-runs</td><td>Nov 25 &middot; animation review</td></tr>
@@ -826,7 +826,7 @@
         </tbody>
       </table>
     </div>
-    <p class="asof">Status as of October 20, 2026</p>
+    <p class="asof">Status as of November 7, 2026</p>
   </section>
 
   <!-- ─ Milestones ────────────────────────────────────────────── -->
@@ -839,7 +839,7 @@
           <p class="milestone-number">Milestone 1</p>
           <p class="milestone-date">Oct 12 &ndash; Oct 23</p>
           <h2 class="milestone-name">Data Foundation and Research Scaffold</h2>
-          <p class="milestone-desc">Station rosters for the California sandbox (490 GHCN-Daily stations in 334 ERA5 cells) and the Horn of Africa (31 GHCNh stations, 16 in the Kenya core). Daily ERA5 and ERA5-Land values on each station's local solar day, exported through Google Earth Engine for 2018&ndash;2025, and gridded daily stacks for both regions. A tested research codebase with continuous integration. The data exports and grids are complete; the ingest and baseline cards are finishing.</p>
+          <p class="milestone-desc">Station rosters and daily observations for the California sandbox (490 GHCN-Daily stations in 334 ERA5 cells). Daily ERA5 and ERA5-Land values on each station's local solar day, exported through Google Earth Engine for 2018&ndash;2025, gridded daily stacks, a figure gallery, and a tested research codebase with continuous integration. The California foundation is complete; the first baselines are under review, and the Afghanistan and Philippines inventories follow.</p>
           <span class="milestone-status status-late">
             <span class="status-dot" aria-hidden="true"></span>
             In Progress &middot; Behind Plan
@@ -850,7 +850,7 @@
         <div class="milestone-dot upcoming" aria-label="Upcoming"></div>
         <div class="milestone-content">
           <p class="milestone-number">Milestone 2</p>
-          <p class="milestone-date">Oct 28 &middot; Demo</p>
+          <p class="milestone-date">November 2026</p>
           <h2 class="milestone-name">Minimum Viable Pipeline: Baselines and First Figures</h2>
           <p class="milestone-desc">An end-to-end chain from data to evaluation to figures: interpolation and lapse-rate baselines, quantile mapping, a gradient-boosted tree baseline, block-bootstrap confidence intervals, leakage-audited splits, and the first maps and animation in a figure gallery. All results on the 2024 validation year; the 2025 test year stays sealed.</p>
           <span class="milestone-status status-upcoming">
@@ -863,7 +863,7 @@
         <div class="milestone-dot upcoming" aria-label="Upcoming"></div>
         <div class="milestone-content">
           <p class="milestone-number">Milestone 3</p>
-          <p class="milestone-date">Oct 30</p>
+          <p class="milestone-date">November 2026</p>
           <h2 class="milestone-name">Thermodynamic Regimes and the First Mixture-of-Experts Run</h2>
           <p class="milestone-desc">Regimes defined from climatological anomalies of temperature, humidity, pressure, wind, radiation and cloud, never from geography or the calendar. A first soft-gated mixture of experts trained against a parameter-matched single network, with gate-health diagnostics: expert utilisation, gate sharpness, and tests that the gate has not learned location or season by the back door.</p>
           <span class="milestone-status status-upcoming">
@@ -876,7 +876,7 @@
         <div class="milestone-dot upcoming" aria-label="Upcoming"></div>
         <div class="milestone-content">
           <p class="milestone-number">Milestone 4</p>
-          <p class="milestone-date">Nov 4</p>
+          <p class="milestone-date">Late November 2026</p>
           <h2 class="milestone-name">Baseline Ladder Frozen</h2>
           <p class="milestone-desc">Every baseline and the mixture-of-experts configuration fixed from validation results and ratified at a live checkpoint before any model touches the test year. Test-fold runs begin the next day, so no result can be tuned on the data it is judged on.</p>
           <span class="milestone-status status-upcoming">
@@ -889,9 +889,9 @@
         <div class="milestone-dot upcoming" aria-label="Upcoming"></div>
         <div class="milestone-content">
           <p class="milestone-number">Milestone 5</p>
-          <p class="milestone-date">Nov 13</p>
-          <h2 class="milestone-name">Transfer to the Horn of Africa and Satellite Context</h2>
-          <p class="milestone-desc">California-trained models applied zero-shot and fine-tuned to the Horn of Africa, reported inside and outside their area of applicability. MODIS and VIIRS land-surface temperature figures placed beside the downscaled maximum-temperature fields, and a demonstration deck.</p>
+          <p class="milestone-date">Late November 2026</p>
+          <h2 class="milestone-name">Transfer to the Philippines and Afghanistan</h2>
+          <p class="milestone-desc">California-trained models applied zero-shot to the Philippines, where about 50 stations report through 2025, and to Afghanistan, evaluated in-country on 2018&ndash;2021 and through neighbouring stations, reported inside and outside their area of applicability.</p>
           <span class="milestone-status status-upcoming">
             <span class="status-dot" aria-hidden="true"></span>
             Upcoming
@@ -902,9 +902,9 @@
         <div class="milestone-dot upcoming" aria-label="Upcoming"></div>
         <div class="milestone-content">
           <p class="milestone-number">Milestone 6</p>
-          <p class="milestone-date">Nov 18 &ndash; Nov 20</p>
+          <p class="milestone-date">Late November &ndash; December 2026</p>
           <h2 class="milestone-name">Mixture-of-Experts Acceptance Review and Heat-Wave Animations</h2>
-          <p class="milestone-desc">A pre-registered test of whether regime gating improves on the strongest baselines, overall and in the regime where the single network struggles most, with the result stated plainly either way. Heat-wave case-study animations for California and the Kenya core, comparing the coarse reanalysis, the downscaled field and station observations day by day.</p>
+          <p class="milestone-desc">A pre-registered test of whether regime gating improves on the strongest baselines, overall and in the regime where the single network struggles most, with the result stated plainly either way. Heat-wave case-study animations for California and the Philippines, comparing the coarse reanalysis, the downscaled field and station observations day by day.</p>
           <span class="milestone-status status-upcoming">
             <span class="status-dot" aria-hidden="true"></span>
             Upcoming

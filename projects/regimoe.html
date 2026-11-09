@@ -710,7 +710,7 @@
     <div class="prose">
       <p>Coarse reanalysis smooths away the local heat that matters most to people living in camps, settlements and under-monitored regions. A single statistical correction applied everywhere also averages over very different weather: a humid coastal day, a dry desert afternoon and a stable mountain night carry different biases. RegiMoE learns those differences explicitly. A gate reads the day's thermodynamic state as anomalies from climatology and assigns it softly to a small set of regimes; each regime has its own expert that corrects the coarse field toward what ground stations record.</p>
       <p>The work builds directly on the physics-informed SRGAN proposal for this fellowship, which introduced a Thermodynamic Regime Classifier and regional calibrators. Here the regime gate becomes the core of the model and is tested as rigorously as any baseline. Adversarial fine-tuning and gridded super-resolution are deferred to Spring 2027 so that this term delivers station-validated results first.</p>
-      <p>The project is developed in a California sandbox, where stations are dense and climates diverse, then transferred to Afghanistan, where conflict has thinned the station record, and to the Philippines, where typhoons and extreme heat drive displacement. Every claim is judged on stations the model has never seen, in a year held out until the baselines are frozen.</p>
+      <p>The project is developed in a California sandbox, where stations are dense and climates diverse, then transferred to Afghanistan, where conflict has thinned the station record, to the Philippines, where typhoons and extreme heat drive displacement, and to the Horn of Africa, where Dadaab in Garissa County is the named humanitarian site. Every claim is judged on stations the model has never seen, in a year held out until the baselines are frozen.</p>
     </div>
   </section>
 
@@ -772,10 +772,10 @@
       <div class="data-source-item">
         <div class="data-source-header">
           <span class="data-source-tag">Ground Truth &middot; Transfer</span>
-          <h3 class="data-source-name">GHCNh and ISD, Afghanistan and the Philippines</h3>
+          <h3 class="data-source-name">GHCNh and ISD, Transfer Regions</h3>
         </div>
-        <p class="data-source-desc">Hourly synoptic reports turned into daily extremes on a fixed sampling schedule, with per-station eligibility for maximum and minimum temperature. Afghanistan&rsquo;s in-country record thins sharply after 2021, so its region includes neighbouring stations in Pakistan, Tajikistan, Turkmenistan, Uzbekistan and Iran, and in-country evaluation uses 2018&ndash;2021. About 50 Philippine stations report through 2025. Named humanitarian sites include Kabul and Herat, Marawi and Lanao del Sur, and Tacloban.</p>
-        <div class="data-source-meta"><span class="data-meta-item"><span class="data-meta-label">Provider</span> NOAA NCEI</span><span class="data-meta-item"><span class="data-meta-label">Stations</span> ~50 Philippines &middot; 79 in the Afghanistan region</span><span class="data-meta-item"><span class="data-meta-label">Role</span> Transfer evaluation</span></div>
+        <p class="data-source-desc">Hourly synoptic reports turned into daily extremes on a fixed sampling schedule, with per-station eligibility for maximum and minimum temperature. Afghanistan&rsquo;s in-country record thins sharply after 2021, so its region includes neighbouring stations in Pakistan, Tajikistan, Turkmenistan, Uzbekistan and Iran, and in-country evaluation uses 2018&ndash;2021. About 50 Philippine stations report through 2025. The Horn of Africa region covers Dadaab in Garissa County, Kenya, drawing on stations across northeastern Kenya. Named humanitarian sites are Marawi and Lanao del Sur (Philippines), Dadaab (Horn of Africa), and Lashkar Gah and Herat (Afghanistan).</p>
+        <div class="data-source-meta"><span class="data-meta-item"><span class="data-meta-label">Provider</span> NOAA NCEI</span><span class="data-meta-item"><span class="data-meta-label">Stations</span> ~50 Philippines &middot; 79 Afghanistan region &middot; Horn of Africa</span><span class="data-meta-item"><span class="data-meta-label">Role</span> Transfer evaluation</span></div>
       </div>
       <div class="data-source-item">
         <div class="data-source-header">
@@ -792,7 +792,7 @@
   <section id="progress">
     <p class="section-label">Progress</p>
     <div class="prose">
-      <p>The work plan breaks the term into 52 task cards with estimated hours, nine weekly sprints and a weekly Wednesday checkpoint. The data foundation finished ahead of plan; the modelling cards have slipped, and on October 27 the transfer regions changed from the Horn of Africa to Afghanistan and the Philippines. The scope through the December 11 delivery is being re-set by the principal investigator, so the dates below for November are provisional.</p>
+      <p>The work plan breaks the term into 52 task cards with estimated hours, nine weekly sprints and a weekly Wednesday checkpoint. The data foundation finished ahead of plan; the modelling cards have slipped, and on October 27 the transfer regions shifted to Afghanistan and the Philippines; the Horn of Africa (Dadaab) has since been confirmed as a third transfer region. The scope through the December 11 delivery is being re-set by the principal investigator, so the dates below for November are provisional.</p>
     </div>
     <div class="progress-row">
       <div class="progress-stat"><div class="progress-value">9 / 52</div><div class="progress-label">Task cards complete</div><div class="progress-note">2 more in progress</div></div>
@@ -890,8 +890,8 @@
         <div class="milestone-content">
           <p class="milestone-number">Milestone 5</p>
           <p class="milestone-date">Late November 2026</p>
-          <h2 class="milestone-name">Transfer to the Philippines and Afghanistan</h2>
-          <p class="milestone-desc">California-trained models applied zero-shot to the Philippines, where about 50 stations report through 2025, and to Afghanistan, evaluated in-country on 2018&ndash;2021 and through neighbouring stations, reported inside and outside their area of applicability.</p>
+          <h2 class="milestone-name">Transfer to the Philippines, Afghanistan, and the Horn of Africa</h2>
+          <p class="milestone-desc">California-trained models applied zero-shot to the Philippines, where about 50 stations report through 2025, to Afghanistan, evaluated in-country on 2018&ndash;2021 and through neighbouring stations, and to the Horn of Africa, with Dadaab in Garissa County as the named site. All three transfer evaluations are reported inside and outside their area of applicability.</p>
           <span class="milestone-status status-upcoming">
             <span class="status-dot" aria-hidden="true"></span>
             Upcoming
@@ -904,7 +904,7 @@
           <p class="milestone-number">Milestone 6</p>
           <p class="milestone-date">Late November &ndash; December 2026</p>
           <h2 class="milestone-name">Mixture-of-Experts Acceptance Review and Heat-Wave Animations</h2>
-          <p class="milestone-desc">A pre-registered test of whether regime gating improves on the strongest baselines, overall and in the regime where the single network struggles most, with the result stated plainly either way. Heat-wave case-study animations for California and the Philippines, comparing the coarse reanalysis, the downscaled field and station observations day by day.</p>
+          <p class="milestone-desc">A pre-registered test of whether regime gating improves on the strongest baselines, overall and in the regime where the single network struggles most, with the result stated plainly either way. Heat-wave case-study animations for all transfer and sandbox regions, comparing the coarse reanalysis, the downscaled field and station observations day by day: Central Valley (Jul 3&ndash;9, 2024), Los Angeles and San Diego (Oct 2&ndash;8, 2026), Cotabato City (Apr 4&ndash;10, 2024), Garissa (Oct 24&ndash;30, 2025), and Southwestern Afghanistan (Jun 10&ndash;16, 2021).</p>
           <span class="milestone-status status-upcoming">
             <span class="status-dot" aria-hidden="true"></span>
             Upcoming
